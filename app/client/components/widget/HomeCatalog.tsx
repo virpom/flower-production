@@ -4,7 +4,7 @@ import Link from "next/link";
 import ShopItem from "../element/ShopItem";
 import ShopItemSkeleton from "../element/ShopItemSkeleton";
 import { useState, useEffect } from "react";
-import { IProduct } from "@/models/Product";
+import { IProduct } from "@/client/models/Product";
 
 async function getAllProducts(): Promise<IProduct[]> {
   try {

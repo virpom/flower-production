@@ -1,6 +1,9 @@
 import { getCachedSettings } from "@/lib/cache";
 import SettingsForm from "./SettingsForm";
 
+// Принудительно делаем страницу динамической
+export const dynamic = 'force-dynamic';
+
 export default async function SettingsPage() {
   const settings = await getCachedSettings();
   
@@ -13,4 +16,4 @@ export default async function SettingsPage() {
       <SettingsForm initialSettings={plainSettings} />
     </div>
   );
-} 
+}

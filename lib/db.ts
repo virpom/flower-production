@@ -2,7 +2,13 @@ import mongoose from 'mongoose';
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
-if (!MONGODB_URI) {
+// Определяем, что мы в режиме сборки
+const isBuildTime = process.env.NODE_ENV === 'production' && 
+  (process.env.NEXT_PHASE === 'phase-production-build' || 
+   process.env.BUILD_ID || 
+   !MONGODB_URI);
+
+if (!MONGODB_URI && !isBuildTime) {
   throw new Error('Пожалуйста, определите MONGODB_URI в файле .env');
 }
 

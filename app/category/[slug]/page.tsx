@@ -3,7 +3,7 @@
 import { useParams, notFound } from 'next/navigation';
 import Catalog from '../../client/components/catalog/Catalog';
 import { useState, useEffect } from 'react';
-import { IProduct } from '@/models/Product';
+import { IProduct } from '@/client/models/Product';
 
 async function getProducts(categoryId: string, subcategoryId?: string): Promise<IProduct[]> {
   try {

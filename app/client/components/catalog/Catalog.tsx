@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import ShopItem from "../element/ShopItem";
 import ShopItemSkeleton from "../element/ShopItemSkeleton";
-import { IProduct } from "@/models/Product";
+import { IProduct } from "@/client/models/Product";
 
 const useProducts = ({ categoryId, subcategoryId }: { categoryId?: string, subcategoryId?: string }) => {
   const [loading, setLoading] = useState(true);

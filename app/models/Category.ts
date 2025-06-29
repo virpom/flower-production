@@ -66,7 +66,18 @@ const categorySchema = new Schema<ICategory>(
   }
 );
 
+// Функция для создания модели только в runtime
+function getCategoryModel() {
+  // Возвращаем модель только если она уже существует или мы в runtime
+  if (typeof window !== 'undefined') {
+    // На клиенте модели не должны создаваться
+    throw new Error('Models should not be created on client side');
+  }
+  
+  return models.Category || mongoose.model('Category', categorySchema);
+}
+
 // Экспорт модели категории
-export const Category = models.Category || mongoose.model('Category', categorySchema);
+export const Category = getCategoryModel();
 
 export default Category;

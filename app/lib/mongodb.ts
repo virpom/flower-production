@@ -2,7 +2,10 @@ import mongoose from 'mongoose';
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://floweradmin:flowerpassword@localhost:27017/flowerdb?authSource=admin';
 
-if (!MONGODB_URI) {
+// Проверяем, что мы не в режиме сборки
+const isBuildTime = process.env.NODE_ENV === 'production' && typeof window === 'undefined' && !process.env.VERCEL && !MONGODB_URI;
+
+if (!MONGODB_URI && !isBuildTime) {
   throw new Error('Пожалуйста, определите MONGODB_URI в .env файле');
 }
 
