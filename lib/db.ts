@@ -20,6 +20,12 @@ if (!cached) {
 }
 
 async function connect() {
+  // Если мы в режиме сборки, возвращаем мок-соединение
+  if (isBuildTime) {
+    console.log('Режим сборки: пропускаем подключение к MongoDB');
+    return { connection: { readyState: 1 } }; // Мок объект
+  }
+
   if (cached.conn) {
     return cached.conn;
   }

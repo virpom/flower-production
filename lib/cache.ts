@@ -156,6 +156,17 @@ export async function getCachedPaymentSettings() {
 
 // Кэш для настроек
 export async function getCachedSettings() {
+  // Проверяем режим сборки
+  const isBuildTime = process.env.NODE_ENV === 'production' && 
+    (process.env.NEXT_PHASE === 'phase-production-build' || 
+     process.env.BUILD_ID || 
+     !process.env.MONGODB_URI);
+
+  if (isBuildTime) {
+    console.log('[BUILD MODE] Возвращаем мок настройки');
+    return null;
+  }
+
   return unstable_cache(
     async () => {
       console.log('[CACHE MISS] Загружаем настройки из БД');
