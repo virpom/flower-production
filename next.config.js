@@ -17,10 +17,8 @@ const nextConfig = {
     ],
   },
   
-  // Экспериментальные функции
-  experimental: {
-    serverComponentsExternalPackages: ['mongoose'],
-  },
+  // Внешние пакеты для сервера
+  serverExternalPackages: ['mongoose'],
   
   // Компилятор
   compiler: {
