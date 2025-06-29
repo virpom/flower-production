@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "db:seed": "node seed-data.js",
+    "create-admin": "node create-admin.js",
     "dev:tunnel": "next build && concurrently \"next start -H 0.0.0.0\" \"npx localtunnel --port 3000\""
   },
   "dependencies": {
