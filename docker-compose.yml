@@ -1,23 +1,49 @@
+version: '3.8'
+
 services:
   mongodb:
-    image: mongo:latest
+    image: mongo:7
     container_name: flower-mongodb
-    restart: always
-    ports:
-      - "27017:27017"
+    restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: floweradmin
       MONGO_INITDB_ROOT_PASSWORD: flowerpassword
       MONGO_INITDB_DATABASE: flowerdb
     volumes:
-      - mongodb-data:/data/db
+      - mongodb_data:/data/db
     networks:
-      - flower-network
+      - app-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
 
-  mongo-admin:
-    image: mongo-express:latest
-    container_name: flower-mongo-admin
-    restart: always
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flower-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://floweradmin:flowerpassword@mongodb:27017/flowerdb?authSource=admin
+      - JWT_SECRET=b7e715694c65e315219213192452b43a9030a528625e19a4843b381517865268
+      - NEXT_PUBLIC_APP_URL=http://localhost:3000
+      - NEXT_PUBLIC_API_URL=http://localhost:3000/api
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  mongo-express:
+    image: mongo-express:1.0.0
+    container_name: flower-mongo-express
+    restart: unless-stopped
     ports:
       - "8081:8081"
     environment:
@@ -30,14 +56,15 @@ services:
       ME_CONFIG_OPTIONS_EDITORTHEME: ambiance
       ME_CONFIG_MONGODB_ENABLE_ADMIN: "true"
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
     networks:
-      - flower-network
+      - app-network
 
 volumes:
-  mongodb-data:
-    name: flower-mongodb-data
+  mongodb_data:
+    driver: local
 
 networks:
-  flower-network:
-    name: flower-network 
+  app-network:
+    driver: bridge

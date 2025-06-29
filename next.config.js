@@ -1,52 +1,47 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Включаем standalone output для Docker
+  output: 'standalone',
+  
+  // Оптимизация изображений
   images: {
     formats: ['image/webp'],
     minimumCacheTTL: 60,
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     domains: ['images.unsplash.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
   },
+  
+  // Экспериментальные функции
   experimental: {
-    optimisticClientCache: true,
-    serverMinification: true,
+    serverComponentsExternalPackages: ['mongoose'],
   },
+  
+  // Компилятор
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
+  
+  // Игнорируем ошибки для быстрой сборки
   eslint: {
     ignoreDuringBuilds: true,
   },
   typescript: {
     ignoreBuildErrors: true,
   },
-  webpack: (config) => {
-    config.module.rules.push({
-      test: /\.(png|jpe?g|gif|svg|webp)$/i,
-      use: [
-        {
-          loader: 'image-webpack-loader',
-          options: {
-            mozjpeg: {
-              progressive: true,
-              quality: 65,
-            },
-            optipng: {
-              enabled: true,
-            },
-            pngquant: {
-              quality: [0.65, 0.90],
-              speed: 4,
-            },
-            gifsicle: {
-              interlaced: false,
-            },
-            webp: {
-              quality: 75,
-            },
-          },
-        },
-      ],
-    });
+  
+  // Webpack конфигурация
+  webpack: (config, { isServer }) => {
+    // Исключаем некоторые зависимости для серверной части
+    if (isServer) {
+      config.externals.push('_http_common');
+    }
+    
     return config;
   },
 };
