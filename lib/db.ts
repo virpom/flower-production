@@ -26,6 +26,12 @@ async function connect() {
     return { connection: { readyState: 1 } }; // Мок объект
   }
 
+  // Проверяем наличие MONGODB_URI в рантайме
+  if (!MONGODB_URI) {
+    console.error('MONGODB_URI не определен в переменных окружения');
+    throw new Error('MONGODB_URI не определен в переменных окружения');
+  }
+
   if (cached.conn) {
     return cached.conn;
   }
@@ -33,12 +39,21 @@ async function connect() {
   if (!cached.promise) {
     // Настройки для MongoDB в Docker
     const options = {
-      authSource: 'admin'
+      authSource: 'admin',
+      serverSelectionTimeoutMS: 10000, // 10 секунд
+      connectTimeoutMS: 10000, // 10 секунд
+      socketTimeoutMS: 45000, // 45 секунд
     };
     
+    console.log('Подключение к MongoDB:', MONGODB_URI.replace(/:\/\/[^:]+:[^@]+@/, '://***:***@'));
+    
     cached.promise = mongoose.connect(MONGODB_URI, options).then((mongoose) => {
-      console.log('Подключено к MongoDB в Docker');
+      console.log('Подключено к MongoDB успешно');
       return mongoose;
+    }).catch((error) => {
+      console.error('Ошибка подключения к MongoDB:', error.message);
+      cached.promise = null;
+      throw error;
     });
   }
 

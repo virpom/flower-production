@@ -23,8 +23,9 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json(categories);
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: 'Ошибка сервера' }, { status: 500 });
+    console.error('Ошибка API категорий:', error);
+    // Возвращаем пустой массив вместо ошибки для лучшего UX
+    return NextResponse.json([]);
   }
 }
 
