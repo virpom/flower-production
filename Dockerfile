@@ -30,16 +30,23 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Устанавливаем зависимости
+COPY package.json package-lock.json* ./
+RUN npm ci --only=production
+
 # Создаем пользователя и группу
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs && \
     mkdir -p /app/.next /app/.next/static /app/public
 
 # Копируем только необходимые файлы с правильными правами
-COPY --from=builder --chown=nextjs:nodejs /app/next.config.js .
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone .
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder /app/next.config.js .
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+# Выводим список файлов для отладки
+RUN ls -la /app && ls -la /app/.next/standalone
 
 # Устанавливаем рабочую директорию и пользователя
 WORKDIR /app

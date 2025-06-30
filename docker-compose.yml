@@ -42,7 +42,7 @@ services:
       dockerfile: Dockerfile
       target: production  # Явно указываем цель сборки
     container_name: flower-app
-    command: ["node", "server.js"]  # Запускаем сервер из standalone-сборки
+    command: ["npm", "start"]  # Используем npm start для запуска Next.js
     restart: unless-stopped
     ports:
       - "3001:3001"
