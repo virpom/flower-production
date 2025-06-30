@@ -75,3 +75,11 @@ COPY seed-data-safe.js ./seed-data-safe.js
 
 # Default command for seeder
 CMD ["node", "seed-data-safe.js"]
+
+# ---- Final stage (production image) ----
+# Ensure the Next.js application stage is the last one so that platforms
+# which build the *last* stage by default (e.g. Dokploy) pick it up.
+FROM runner AS production
+
+# Inherit everything from `runner`. The CMD is set again just for clarity.
+CMD ["node", ".next/standalone/server.js"]
