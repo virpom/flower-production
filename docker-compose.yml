@@ -20,6 +20,20 @@ services:
       retries: 5
       start_period: 40s
 
+  mongo-seed:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flower-mongo-seed
+    command: ["node", "seed-data.js"]
+    environment:
+      - MONGODB_URI=mongodb://floweradmin:flowerpassword@mongodb:27017/flowerdb?authSource=admin
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - app-network
+
   app:
     build:
       context: .
@@ -37,6 +51,8 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
+      mongo-seed:
+        condition: service_completed_successfully
     networks:
       - app-network
 
