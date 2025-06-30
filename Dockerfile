@@ -60,3 +60,10 @@ ENV HOSTNAME="0.0.0.0"
 
 # Start the application
 CMD ["node", "server.js"]
+
+# Seeder image for running one-off scripts
+FROM base AS seeder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=builder /app/seed-data.js ./seed-data.js
+COPY --from=builder /app/package.json ./package.json
