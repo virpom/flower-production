@@ -12,7 +12,7 @@ async function seedDatabase() {
     
     const db = client.db();
     
-    // Очищаем существующие данные
+    // Очищаем существующие данные и индексы
     console.log('🧹 Очистка существующих данных...');
     await db.collection('users').deleteMany({});
     await db.collection('categories').deleteMany({});
@@ -21,6 +21,13 @@ async function seedDatabase() {
     await db.collection('orders').deleteMany({});
     await db.collection('settings').deleteMany({});
     await db.collection('paymentsettings').deleteMany({});
+    
+    // Удаляем проблемные индексы
+    try {
+      await db.collection('categories').dropIndex('subcategories.slug_1');
+    } catch (e) {
+      // Индекс может не существовать
+    }
     
     // Создаем администратора
     console.log('👤 Создание администратора...');

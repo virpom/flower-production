@@ -53,9 +53,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
 
 USER nextjs
 
-EXPOSE 3000
+EXPOSE 3001
 
-ENV PORT=3000
+ENV PORT=3001
 ENV HOSTNAME="0.0.0.0"
 
 # Start the application
@@ -64,6 +64,14 @@ CMD ["node", "server.js"]
 # Seeder image for running one-off scripts
 FROM base AS seeder
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=builder /app/seed-data.js ./seed-data.js
-COPY --from=builder /app/package.json ./package.json
+
+# Install dependencies
+COPY package.json package-lock.json* ./
+RUN npm ci
+
+# Copy seed files
+COPY seed-data.js ./seed-data.js
+COPY seed-data-safe.js ./seed-data-safe.js
+
+# Default command for seeder
+CMD ["node", "seed-data-safe.js"]

@@ -26,7 +26,7 @@ services:
       dockerfile: Dockerfile
       target: seeder
     container_name: flower-mongo-seed
-    command: ["node", "seed-data.js"]
+    command: ["node", "seed-data-safe.js"]
     environment:
       - MONGODB_URI=mongodb://floweradmin:flowerpassword@mongodb:27017/flowerdb?authSource=admin
     depends_on:
@@ -34,6 +34,7 @@ services:
         condition: service_healthy
     networks:
       - app-network
+    restart: "no"
 
   app:
     build:
