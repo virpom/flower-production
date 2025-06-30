@@ -30,29 +30,23 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Установка зависимостей
-COPY package.json package-lock.json* ./
-RUN npm ci --only=production
-
 # Создаем пользователя и группу
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs && \
+    mkdir -p /app/.next /app/.next/static /app/public
 
-# Copy the public folder from the project as this is not included in build output
-COPY --from=builder /app/public ./public
+# Копируем только необходимые файлы с правильными правами
+COPY --from=builder --chown=nextjs:nodejs /app/next.config.js .
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone .
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Set the correct permission for prerender cache
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
+# Устанавливаем рабочую директорию и пользователя
+WORKDIR /app
+USER nextjs
 
-# Copy the built application
-COPY --from=builder /app/next.config.js ./
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-
-# Устанавливаем владельца для всех файлов
-RUN chown -R nextjs:nodejs /app
+# Устанавливаем порт по умолчанию
+EXPOSE 3001
 
 # Copy additional files needed for the application
 COPY --from=builder --chown=nextjs:nodejs /app/models ./models
@@ -61,15 +55,12 @@ COPY --from=builder --chown=nextjs:nodejs /app/create-admin.js ./create-admin.js
 COPY --from=builder --chown=nextjs:nodejs /app/seed-data.js ./seed-data.js
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
 
-USER nextjs
-
-EXPOSE 3001
-
+# Устанавливаем переменные окружения
 ENV PORT=3001
 ENV HOSTNAME="0.0.0.0"
 
-# Start the application
-CMD ["node", ".next/standalone/server.js"]
+# Команда по умолчанию (может быть переопределена в docker-compose)
+CMD ["node", "server.js"]
 
 # Seeder image for running one-off scripts
 FROM base AS seeder
