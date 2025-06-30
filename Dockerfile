@@ -37,16 +37,18 @@ RUN npm ci --only=production
 # Создаем пользователя и группу
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs && \
-    mkdir -p /app/.next /app/.next/static /app/public
+    mkdir -p /app/.next /app/public
 
-# Копируем только необходимые файлы с правильными правами
+# Копируем только необходимые файлы
 COPY --from=builder /app/next.config.js .
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/.next ./.next
 
-# Выводим список файлов для отладки
-RUN ls -la /app && ls -la /app/.next/standalone
+# Копируем дополнительные файлы
+COPY --from=builder /app/models ./models
+COPY --from=builder /app/lib ./lib
+COPY --from=builder /app/create-admin.js .
+COPY --from=builder /app/seed-data.js .
 
 # Устанавливаем рабочую директорию и пользователя
 WORKDIR /app
@@ -55,19 +57,12 @@ USER nextjs
 # Устанавливаем порт по умолчанию
 EXPOSE 3001
 
-# Copy additional files needed for the application
-COPY --from=builder --chown=nextjs:nodejs /app/models ./models
-COPY --from=builder --chown=nextjs:nodejs /app/lib ./lib
-COPY --from=builder --chown=nextjs:nodejs /app/create-admin.js ./create-admin.js
-COPY --from=builder --chown=nextjs:nodejs /app/seed-data.js ./seed-data.js
-COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
-
 # Устанавливаем переменные окружения
 ENV PORT=3001
 ENV HOSTNAME="0.0.0.0"
 
-# Команда по умолчанию (может быть переопределена в docker-compose)
-CMD ["node", "server.js"]
+# Команда по умолчанию
+CMD ["npm", "start"]
 
 # Seeder image for running one-off scripts
 FROM base AS seeder
