@@ -27,13 +27,13 @@ services:
     container_name: flower-app
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3001:3001"
     environment:
       - NODE_ENV=production
       - MONGODB_URI=mongodb://floweradmin:flowerpassword@mongodb:27017/flowerdb?authSource=admin
       - JWT_SECRET=b7e715694c65e315219213192452b43a9030a528625e19a4843b381517865268
-      - NEXT_PUBLIC_APP_URL=http://localhost:3000
-      - NEXT_PUBLIC_API_URL=http://localhost:3000/api
+      - NEXT_PUBLIC_APP_URL=http://localhost:3001
+      - NEXT_PUBLIC_API_URL=http://localhost:3001/api
     depends_on:
       mongodb:
         condition: service_healthy
