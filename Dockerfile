@@ -59,7 +59,7 @@ ENV PORT=3001
 ENV HOSTNAME="0.0.0.0"
 
 # Start the application
-CMD ["node", "server.js"]
+CMD ["node", ".next/standalone/server.js"]
 
 # Seeder image for running one-off scripts
 FROM base AS seeder
