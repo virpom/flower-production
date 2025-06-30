@@ -40,7 +40,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: production  # Явно указываем цель сборки
     container_name: flower-app
+    command: ["node", ".next/standalone/server.js"]  # Явно указываем команду запуска
     restart: unless-stopped
     ports:
       - "3001:3001"
