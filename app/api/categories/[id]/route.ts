@@ -6,6 +6,8 @@ import Product from '@/models/Product';
 import { revalidatePath } from 'next/cache';
 import mongoose from 'mongoose';
 
+export const dynamic = 'force-dynamic';
+
 // GET запрос для получения конкретной категории по ID
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCachedOrderStats } from '@/lib/cache';
 
+export const dynamic = 'force-dynamic';
+
 // GET запрос для получения статистики (с кэшированием)
 export async function GET(request: NextRequest) {
   try {

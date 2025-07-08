@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import connect from '@/lib/db';
 import Category from '@/app/models/Category';
 
+export const dynamic = 'force-dynamic';
+
 // GET запрос для получения всех подкатегорий определенной категории
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {

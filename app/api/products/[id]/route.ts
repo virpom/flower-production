@@ -4,6 +4,8 @@ import { Product } from '@/app/models/Product';
 import mongoose from 'mongoose';
 import { revalidatePath } from 'next/cache';
 
+export const dynamic = 'force-dynamic';
+
 // GET запрос для получения товара по ID
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {

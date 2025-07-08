@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import connect from '@/lib/db';
 import { Product } from '@/app/models/Product';
 
+export const dynamic = 'force-dynamic';
+
 // GET запрос для получения товаров по ID категории
 export async function GET(request: NextRequest, { params }: { params: { categoryId: string } }) {
   try {

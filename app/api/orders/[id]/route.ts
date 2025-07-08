@@ -1,25 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import Order from '@/models/Order';
+import { invalidateOrdersCache, invalidateOrderStatsCache } from '@/lib/cache';
 
-// GET запрос для получения конкретного заказа
-export async function GET(
-  request: NextRequest,
-  context: { params: { id: string } }
-) {
+export const dynamic = 'force-dynamic';
+
+// GET запрос для получения одного заказа по ID
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     await dbConnect();
-    const { id } = await context.params;
     
-    if (!id) {
-      return NextResponse.json(
-        { error: 'ID заказа обязателен' },
-        { status: 400 }
-      );
-    }
-    
-    const order = await Order.findById(id)
-      .populate('items.productId', 'name price image description');
+    const order = await Order.findById(params.id).populate('items.productId', 'name price image');
     
     if (!order) {
       return NextResponse.json(
@@ -28,22 +19,10 @@ export async function GET(
       );
     }
     
-    // Проверяем права доступа
-    const userRole = request.headers.get('x-user-role');
-    const userEmail = request.headers.get('x-username'); // В нашем случае username = email
-    
-    // Если не админ, проверяем что заказ принадлежит пользователю
-    if (userRole !== 'admin' && order.customer.email !== userEmail) {
-      return NextResponse.json(
-        { error: 'Доступ запрещен' },
-        { status: 403 }
-      );
-    }
-    
     return NextResponse.json({ order }, { status: 200 });
     
   } catch (error: any) {
-    console.error('Ошибка при получении заказа:', error);
+    console.error(`Ошибка при получении заказа ${params.id}:`, error);
     return NextResponse.json(
       { error: 'Ошибка при получении заказа', details: error.message },
       { status: 500 }
@@ -51,11 +30,8 @@ export async function GET(
   }
 }
 
-// PATCH запрос для частичного обновления заказа
-export async function PATCH(
-  request: NextRequest,
-  context: { params: { id: string } }
-) {
+// PUT запрос для обновления заказа по ID (например, статуса)
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     // Получаем информацию о пользователе из middleware
     const userRole = request.headers.get('x-user-role');
@@ -69,18 +45,10 @@ export async function PATCH(
 
     await dbConnect();
     
-    const { id } = await context.params;
     const body = await request.json();
     
-    if (!id) {
-      return NextResponse.json(
-        { error: 'ID заказа обязателен' },
-        { status: 400 }
-      );
-    }
-    
     const updatedOrder = await Order.findByIdAndUpdate(
-      id,
+      params.id,
       body,
       { new: true, runValidators: true }
     ).populate('items.productId', 'name price image');
@@ -92,10 +60,14 @@ export async function PATCH(
       );
     }
     
+    // Инвалидируем кэш заказов и статистики
+    invalidateOrdersCache();
+    invalidateOrderStatsCache();
+    
     return NextResponse.json({ order: updatedOrder }, { status: 200 });
     
   } catch (error: any) {
-    console.error('Ошибка при обновлении заказа:', error);
+    console.error(`Ошибка при обновлении заказа ${params.id}:`, error);
     
     if (error.name === 'ValidationError') {
       const validationErrors = Object.values(error.errors).map(
@@ -114,11 +86,8 @@ export async function PATCH(
   }
 }
 
-// DELETE запрос для удаления заказа (только для админов)
-export async function DELETE(
-  request: NextRequest,
-  context: { params: { id: string } }
-) {
+// DELETE запрос для удаления заказа по ID
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     // Получаем информацию о пользователе из middleware
     const userRole = request.headers.get('x-user-role');
@@ -132,16 +101,7 @@ export async function DELETE(
 
     await dbConnect();
     
-    const { id } = await context.params;
-    
-    if (!id) {
-      return NextResponse.json(
-        { error: 'ID заказа обязателен' },
-        { status: 400 }
-      );
-    }
-    
-    const deletedOrder = await Order.findByIdAndDelete(id);
+    const deletedOrder = await Order.findByIdAndDelete(params.id);
     
     if (!deletedOrder) {
       return NextResponse.json(
@@ -150,13 +110,17 @@ export async function DELETE(
       );
     }
     
+    // Инвалидируем кэш заказов и статистики
+    invalidateOrdersCache();
+    invalidateOrderStatsCache();
+    
     return NextResponse.json(
-      { message: 'Заказ успешно удален', order: deletedOrder },
+      { message: 'Заказ успешно удален' },
       { status: 200 }
     );
     
   } catch (error: any) {
-    console.error('Ошибка при удалении заказа:', error);
+    console.error(`Ошибка при удалении заказа ${params.id}:`, error);
     return NextResponse.json(
       { error: 'Ошибка при удалении заказа', details: error.message },
       { status: 500 }

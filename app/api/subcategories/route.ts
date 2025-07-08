@@ -5,6 +5,8 @@ import { getCachedSubcategories, invalidateSubcategoriesCache } from '@/lib/cach
 import Category from '@/models/Category';
 import { revalidatePath } from 'next/cache';
 
+export const dynamic = 'force-dynamic';
+
 // GET all subcategories or by slug
 export async function GET(request: NextRequest) {
   try {

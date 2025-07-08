@@ -6,6 +6,8 @@ import Product from '@/models/Product';
 import { revalidatePath } from 'next/cache';
 import mongoose from 'mongoose';
 
+export const dynamic = 'force-dynamic';
+
 // PUT - Update a subcategory by ID
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -75,4 +77,4 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     console.error('Ошибка при удалении подкатегории:', error);
     return NextResponse.json({ error: 'Ошибка сервера' }, { status: 500 });
   }
-} 
+}  

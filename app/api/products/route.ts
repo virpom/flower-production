@@ -4,6 +4,8 @@ import Product from '@/models/Product';
 import { revalidatePath } from 'next/cache';
 import mongoose from 'mongoose';
 
+export const dynamic = 'force-dynamic';
+
 // GET all products
 export async function GET(request: NextRequest) {
   try {
@@ -56,7 +58,7 @@ export async function POST(request: NextRequest) {
       const validationErrors = Object.values(error.errors).map((err: any) => err.message);
       return NextResponse.json({ error: 'Ошибка валидации', details: validationErrors }, { status: 400 });
     }
-    return NextResponse.json({ error: 'Ошибка при создании товара', details: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Ошибка при создании товар��', details: error.message }, { status: 500 });
   }
 }
 

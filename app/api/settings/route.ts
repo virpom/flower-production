@@ -4,7 +4,9 @@ import Settings from '@/models/Settings';
 import { getCachedSettings, invalidateSettingsCache } from '@/lib/cache';
 import { revalidateTag } from 'next/cache';
 
-// GET запрос для получения настроек (с кэшированием)
+export const dynamic = 'force-dynamic';
+
+// GET запрос для получения наст��оек (с кэшированием)
 export async function GET(request: NextRequest) {
   try {
     console.log('Получение настроек из кэша...');
@@ -104,4 +106,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-} 
+}  

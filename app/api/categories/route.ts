@@ -4,6 +4,8 @@ import Category from '@/models/Category';
 import Subcategory from '@/models/Subcategory';
 import { revalidatePath } from 'next/cache';
 
+export const dynamic = 'force-dynamic';
+
 // GET all categories with their subcategories
 export async function GET(request: NextRequest) {
   try {

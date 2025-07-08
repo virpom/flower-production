@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import connect from '@/lib/db';
 import { Product } from '@/app/models/Product';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     await connect();
@@ -61,7 +63,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '10');
     const skip = (page - 1) * limit;
     
-    // Получаем товары с применением фильтров и пагинации
+    // Получаем товары с применением фильтр��в и пагинации
     const products = await Product.find(filterConditions)
       .sort({ [sortField]: sortOrder })
       .skip(skip)
