@@ -1,17 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { performanceMonitor } from '@/lib/performance';
-import { requireAdmin } from '@/lib/auth';
+import { verifyToken } from '@/lib/auth'; // Импортируем verifyToken
 
 // GET - получение метрик производительности
 export async function GET(request: NextRequest) {
   try {
     // Проверяем права администратора
-    const authResult = await requireAdmin(request);
-    if (!authResult.success) {
-      return NextResponse.json(
-        { error: 'Доступ запрещен' },
-        { status: 403 }
-      );
+    const token = request.cookies.get('auth_token')?.value;
+    if (!token) {
+      return NextResponse.json({ error: 'Требуется авторизация' }, { status: 401 });
+    }
+    const decoded = await verifyToken(token);
+    if (!decoded || decoded.role !== 'admin') {
+      return NextResponse.json({ error: 'Доступ запрещен' }, { status: 403 });
     }
 
     // Получаем параметры запроса
@@ -45,12 +46,13 @@ export async function GET(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     // Проверяем права администратора
-    const authResult = await requireAdmin(request);
-    if (!authResult.success) {
-      return NextResponse.json(
-        { error: 'Доступ запрещен' },
-        { status: 403 }
-      );
+    const token = request.cookies.get('auth_token')?.value;
+    if (!token) {
+      return NextResponse.json({ error: 'Требуется авторизация' }, { status: 401 });
+    }
+    const decoded = await verifyToken(token);
+    if (!decoded || decoded.role !== 'admin') {
+      return NextResponse.json({ error: 'Доступ запрещен' }, { status: 403 });
     }
 
     // Очищаем метрики

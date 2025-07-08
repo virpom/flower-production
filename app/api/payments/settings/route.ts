@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import PaymentSettings from '@/models/PaymentSettings';
 
-// GET запрос для получения настроек платежей
+export const dynamic = 'force-dynamic';
+
+// GET запрос для получения настрое�� платежей
 export async function GET(request: NextRequest) {
   try {
     await dbConnect();
@@ -70,7 +72,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ settings: updatedSettings }, { status: 200 });
     
   } catch (error: any) {
-    console.error('Ошибка при обновлении настроек платежей:', error);
+    console.error('Ошибка п��и обновлении настроек платежей:', error);
     
     if (error.name === 'ValidationError') {
       const validationErrors = Object.values(error.errors).map(
