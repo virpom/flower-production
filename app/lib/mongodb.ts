@@ -1,10 +1,6 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://floweradmin:flowerpassword@localhost:27017/flowerdb?authSource=admin';
-
-if (!MONGODB_URI) {
-  throw new Error('Пожалуйста, определите MONGODB_URI в .env файле');
-}
+const MONGODB_URI = process.env.MONGODB_URI; // Removed default value, it should come from .env or Docker Compose
 
 // Глобальная переменная для кэширования соединения
 let cached = global as any;
@@ -20,6 +16,11 @@ async function connectDB() {
   if (cached.mongoose.conn) {
     console.log('Используется существующее подключение к MongoDB');
     return cached.mongoose.conn;
+  }
+
+  if (!MONGODB_URI) {
+    // Only throw error if MONGODB_URI is not defined when connection is actually attempted
+    throw new Error('MONGODB_URI не определен. Пожалуйста, убедитесь, что он установлен в .env файле или переменных окружения.');
   }
 
   if (!cached.mongoose.promise) {
@@ -39,6 +40,8 @@ async function connectDB() {
       })
       .catch((error) => {
         console.error('Ошибка подключения к MongoDB:', error);
+        // Clear the promise so that a new attempt can be made later
+        cached.mongoose.promise = null;
         throw error;
       });
   }
