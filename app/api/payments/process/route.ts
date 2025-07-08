@@ -3,6 +3,8 @@ import dbConnect from '@/lib/db';
 import PaymentSettings from '@/models/PaymentSettings';
 import Order from '@/models/Order';
 
+export const dynamic = 'force-dynamic';
+
 // POST запрос для обработки платежа
 export async function POST(request: NextRequest) {
   try {
@@ -145,7 +147,7 @@ async function processSberbankPayment(order: any, paymentData: any, settings: an
     };
   }
   
-  // Здесь будет реальная интеграция со Сбербанком
+  // Здесь будет реальная интеграция со Сбербан��ом
   return {
     success: true,
     paymentId: `sberbank_${Date.now()}`,

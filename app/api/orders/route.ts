@@ -4,6 +4,8 @@ import Order from '@/models/Order';
 import { getCachedOrders, invalidateOrdersCache, invalidateOrderStatsCache } from '@/lib/cache';
 import Product from '@/models/Product';
 
+export const dynamic = 'force-dynamic';
+
 // GET запрос для получения заказов (с кэшированием)
 export async function GET(request: NextRequest) {
   try {
@@ -122,7 +124,7 @@ export async function POST(request: NextRequest) {
     }, { status: 201 });
 
   } catch (error) {
-    console.error('Ошибка при создании заказа:', error);
+    console.error('Ошибка пр�� создании заказа:', error);
     if (error.name === 'ValidationError') {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
