@@ -1,0 +1,16 @@
+services:
+  app:
+    build: .
+    container_name: flower-app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGODB_URI=mongodb://floweradmin:flowerpassword@mongodb:27017/flowerdb?authSource=admin
+    networks:
+      - flower-network
+
+networks:
+  flower-network:
+    external: true
+    name: flower-network

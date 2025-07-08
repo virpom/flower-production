@@ -5,6 +5,8 @@ import FadeWrapper from "./components/FadeWrapper";
 import { getCachedSettings } from "@/lib/cache";
 import TopInfoPanel from "./components/layout/TopInfoPanel";
 
+export const dynamic = 'force-dynamic';
+
 export default async function ClientLayout({
     children,
 }: {
