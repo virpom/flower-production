@@ -1,6 +1,8 @@
 import HomeCatalog from "../client/components/widget/HomeCatalog";
 import CategoryGrid from "../client/components/catalog/CategoryGrid";
 
+export const dynamic = 'force-dynamic';
+
 export default function Home() {
   return (
     <div>
