@@ -41,7 +41,7 @@ services:
       - mongodb
     environment:
       - MONGODB_URI=mongodb://floweradmin:flowerpassword@mongodb:27017/flowerdb
-    command: node seed-db.js
+    command: ts-node seed-db.ts
     networks:
       - flower-network
     restart: "no"

@@ -1,14 +1,14 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const User = require('./dist/models/User'); // Убедитесь, что путь к модели User правильный
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import User from './models/User'; // Correct import for TypeScript model
 
 const MONGO_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/flower-shop';
 
 async function seedDatabase() {
   try {
     await mongoose.connect(MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+      // useNewUrlParser: true, // These options are deprecated in Mongoose 6.0+
+      // useUnifiedTopology: true, // These options are deprecated in Mongoose 6.0+
     });
 
     console.log('Успешное подключение к MongoDB...');
@@ -43,4 +43,4 @@ async function seedDatabase() {
   }
 }
 
-seedDatabase(); 
+seedDatabase();
