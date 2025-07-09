@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
     // Поиск пользователя
     const user = await User.findOne({ username });
     if (!user) {
+      console.log(`Login attempt for non-existent user: ${username}`); // Added log
       return NextResponse.json(
         { error: 'Invalid credentials' },
         { status: 401 }
@@ -29,7 +30,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Проверка пароля
+    console.log(`Login attempt for user: ${username}`); // Added log
+    console.log(`Provided password (DEBUG ONLY): ${password}`); // Added log - REMOVE IN PRODUCTION
+    console.log(`Stored hashed password (DEBUG ONLY): ${user.password}`); // Added log - REMOVE IN PRODUCTION
+
     const isPasswordValid = await user.comparePassword(password);
+    console.log(`Password comparison result: ${isPasswordValid}`); // Added log
+
     if (!isPasswordValid) {
       return NextResponse.json(
         { error: 'Invalid credentials' },
@@ -39,6 +46,7 @@ export async function POST(request: NextRequest) {
 
     // Проверка роли админа
     if (user.role !== 'admin') {
+      console.log(`User ${username} is not an admin. Role: ${user.role}`); // Added log
       return NextResponse.json(
         { error: 'Access denied' },
         { status: 403 }
