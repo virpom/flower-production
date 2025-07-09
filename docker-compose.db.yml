@@ -34,6 +34,18 @@ services:
     networks:
       - flower-network
 
+  db-seeder:
+    build: .
+    container_name: flower-db-seeder
+    depends_on:
+      - mongodb
+    environment:
+      - MONGODB_URI=mongodb://floweradmin:flowerpassword@mongodb:27017/flowerdb
+    command: node seed-db.js
+    networks:
+      - flower-network
+    restart: "no"
+
 volumes:
   mongodb-data:
     name: flower-mongodb-data
