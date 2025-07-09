@@ -8,6 +8,7 @@ RUN npm install
 
 COPY . .
 COPY .env .
+RUN npx tsc models/User.ts --outDir dist --module commonjs --esModuleInterop
 
 RUN npm run build
 
