@@ -40,7 +40,7 @@ services:
     depends_on:
       - mongodb
     environment:
-      - MONGODB_URI=mongodb://floweradmin:flowerpassword@mongodb:27017/flowerdb
+      - MONGODB_URI=mongodb://floweradmin:flowerpassword@mongodb:27017/flowerdb?authSource=admin
     command: npx ts-node --compiler-options '{"module":"CommonJS"}' seed-db.ts
     networks:
       - flower-network
