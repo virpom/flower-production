@@ -21,7 +21,7 @@ async function seedDatabase() {
     }
 
     // Хешируем пароль
-    const salt = await bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(10, 'a'); // Force $2a$ prefix for compatibility
     const hashedPassword = await bcrypt.hash('admin123', salt);
 
     // Создаем нового пользователя-админа
